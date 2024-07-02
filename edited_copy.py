@@ -10,6 +10,8 @@ and continue to print until it reaches the end of the grid.
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 UP = 1
@@ -36,11 +38,13 @@ DIRECTIONS = {
 
 def main():
     """Main function."""
-    width = 6
-    height = 9
+    width = 50
+    height = 100
     directions = assign_directions(width, height)
     fill_grid(directions)
     print(directions)
+    sns.heatmap(directions)
+    plt.show()
     print_gcode(directions)
 
 
@@ -65,10 +69,10 @@ def fill_grid(direction):
     """
     # Width is the number of columns, height is the number of rows. Loops until DONE.
     height, width = direction.shape
-    direction[1::2, 1::2] = UP_RIGHT
-    direction[0::2, 0::2] = UP_RIGHT
-    direction[1::2, 0::2] = DOWN_LEFT
-    direction[0::2, 1::2] = DOWN_LEFT
+    direction[1::2, 1::2] = DOWN_LEFT
+    direction[0::2, 0::2] = DOWN_LEFT
+    direction[1::2, 0::2] = UP_RIGHT
+    direction[0::2, 1::2] = UP_RIGHT
     direction[0::2, 0] = DOWN
     direction[0, 1::2] = RIGHT
     direction[(width % 2)::2, -1] = DOWN  # if width is odd, start at 1, if even start at 0
@@ -82,7 +86,7 @@ def print_gcode(directions):
     """
     # TODO: Fix instructions.
     # G-code for every cell in the grid.
-    print("G0 X0 Y0 Z0")
+    print("G0 X0 Y0 Z0.2")
     i, j = 0, 0  # i == y == row, j == x == column
     while directions[i][j] != DONE:
         cur_direction = directions[i][j]
@@ -91,7 +95,7 @@ def print_gcode(directions):
         j += dj
         next_direction = directions[i][j]
         if next_direction != cur_direction:
-            print("G1 X" + str(j) + " Y" + str(i) + " Z0")
+            print("G1 X" + str(j) + " Y" + str(i) + " Z0.2")
 
 
 if __name__ == "__main__":
