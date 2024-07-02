@@ -37,7 +37,7 @@ DIRECTIONS = {
 def main():
     """Main function."""
     width = 6
-    height = 5
+    height = 9
     directions = assign_directions(width, height)
     fill_grid(directions)
     print(directions)
@@ -64,52 +64,15 @@ def fill_grid(direction):
     DONE is assigned to the bottom right corner.
     """
     # Width is the number of columns, height is the number of rows. Loops until DONE.
-    # TODO: Figure out IndexError. Shape mismatch, something with reshaping to work with different dimensions?
     height, width = direction.shape
+    direction[1::2, 1::2] = UP_RIGHT
+    direction[0::2, 0::2] = UP_RIGHT
+    direction[1::2, 0::2] = DOWN_LEFT
+    direction[0::2, 1::2] = DOWN_LEFT
     direction[0::2, 0] = DOWN
     direction[0, 1::2] = RIGHT
     direction[(width % 2)::2, -1] = DOWN  # if width is odd, start at 1, if even start at 0
     direction[-1, (1 - height % 2)::2] = RIGHT  # if height is odd, start at 0, if even start at 1
-
-    # Directions for when position is at bottom left corner.
-    if height % 2 == 0 and direction[-1, 0] == 0:
-        direction[-1, 0] = UP_RIGHT
-    elif height % 2 == 1 and direction[-1, 0] == 0:
-        direction[-1, 0] = RIGHT
-
-    # Directions for when position is at top right corner.
-    if width % 2 == 0 and direction[0, -1] == 0:
-        direction[0, -1] = DOWN
-    elif width % 2 == 1 and direction[0, -1] == 0:
-        direction[0, -1] = DOWN_LEFT
-
-    for i in range(1, height, 2):
-        # Fill in UP_RIGHT until the border is reached.
-        direction[
-            np.arange(i, 0, -1),  # rows from i to 0
-            np.arange(0, i, +1),  # columns from 0 to i
-        ] = UP_RIGHT
-
-        # Fill in DOWN_LEFT until the border is reached.
-        if i+1 < height:
-            direction[
-                np.arange(0, i+1, +1),  # rows from 0 to i+1
-                np.arange(i+1, 0, -1),  # columns from i+1 to 0
-            ] = DOWN_LEFT
-
-    for i in range(height % 2, width, 2):
-        # Fill in UP_RIGHT until the border is reached.
-        direction[
-            np.arange(height-1, i, -1),  # rows from height-1 to i
-            np.arange(i, width-1, +1),  # columns from i to width-1
-        ] = UP_RIGHT
-
-        # Fill in DOWN_LEFT until the border is reached.
-        direction[
-            np.arange(i+1, height-1, +1),  # rows from i+1 to height
-            np.arange(width-1, i+1, -1),  # columns from width-1 to i
-        ] = DOWN_LEFT
-
     direction[-1, -1] = DONE
 
 
